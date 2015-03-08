@@ -1,0 +1,260 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-shop">Города</a></li>
+    <li><a href="#tabs-delivery">Пункты выдачи</a></li>
+  </ul>
+  <div id="tabs-shop">
+    <div class="sidebar left200px s-inner-sidebar brands_edit" id="s-sidebar">
+    <div class="block">      
+    <ul class="menu-v with-icons deliveryshop_ul deliveryshop_reload">     
+        <li>
+            <a href="?plugin=deliveryshop&module=backend&action=editcity&id=new">
+                <i class="icon16 add"></i>Добавить Город
+            </a>
+        </li>  
+        <br />
+        <li>
+            <span class="count">{$cities.all}</span>
+            <a href="?plugin=deliveryshop&action=display">
+                <i class="icon16 ss orders-processing"></i>Все
+            </a>
+        </li>  
+        <br />
+        <li data-status="new">
+            <span class="count">{$cities.new}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=shop&status=new">
+                <i class="icon16 ss new"></i>Новые
+            </a>
+        </li>
+        <li data-status="completed">
+            <span class="count">{$cities.completed}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=shop&status=completed">
+                <i class="icon16 ss completed"></i>Опубликованные
+            </a>
+        </li>
+        <li data-status="flag-white">
+            <span class="count">{$cities['flag-white']}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=shop&status=flag-white">
+                <i class="icon16 ss flag-white"></i>Скрытые
+            </a>
+        </li>
+        <li data-status="refunded">
+            <span class="count">{$cities.refunded}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=shop&status=refunded">
+                <i class="icon16 ss refunded"></i>Исключенные
+            </a>
+        </li>
+    </ul>
+</div>
+</div>
+
+<!-- Список звонков -->
+<div class="content left200px blank brands_edit" id="s-content" style="padding-left: 10px;">
+    <div class="block double-padded hide-then-modal-open">
+          <form class="brands-table" id="brands-table">
+          {$wa->csrf()}
+          <table class="zebra prices obzvon-zebra" id="obzvon_table">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Регион</th>
+                        <th style="width: 140px">Город</th>
+                        <th style="padding: 0 10px!important;" class="shorts align-center">Статус города</th>
+                        <th class="shorts align-center">Изменить статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {foreach $cities.data as $c}
+                    <tr data-id="{$c.cityCode}" data-info="shop">
+                        <td>
+                           <a href="?plugin=deliveryshop&module=backend&action=editcity&id={$c.cityCode}">{$c.region}</a>
+                        </td>
+                        <td>
+                           <a href="?plugin=deliveryshop&module=backend&action=editcity&id={$c.cityCode}">{$c.city}</a>    
+                        </td>
+                        <td class="icon now_status">
+                           <i class="icon16 ss {$c.status}">{$c.status}</i>
+                        </td>
+                        <td class="icon but">
+                           <i class="icon16 ss completed">completed</i>
+                           <i class="icon16 ss flag-white">flag-white</i>
+                           <i class="icon16 ss refunded">refunded</i>
+                        </td>
+                    </tr>
+                {/foreach}   
+                </tbody>
+            </table>
+            </form>
+    </div>
+</div>
+<style>
+.obzvon-zebra th,.obzvon-zebra td{ line-height: 24px; border-right: 1px solid #ccc!important;}
+.obzvon-zebra td{ border-right: 1px solid white!important; padding: 2px 1px 0 15px!important;}
+.obzvon-zebra td.icon{ text-align: center; padding: 5px 0 0 15px!important;}
+.obzvon-zebra td i{ cursor: pointer;}
+.obzvon-zebra th.shorts{ width: 70px!important; text-align: center;}
+
+.new-obzvon-status{ position:relative;}
+.wrap-new-obzvon{ position:; display: none; border: 1px solid #ccc; padding: 5px; margin: 10px 0;}
+.obzvon_status_exists i,.edit { cursor: pointer; }
+
+.wrap-new-obzvon ul{ padding: 10px 5px; text-align: center;}
+.wrap-new-obzvon li { display: inline-block!important;  min-width: 1px!important; margin-right: 8px!important;}
+.obzvon_ul > li:hover > i.delete { display: inline-block!important; cursor: pointer;}
+.obzvon_status_exists i { margin: 4px;}
+
+.ui-widget-content { border:none;}
+.ui-widget-header {
+    border:none;
+    border-bottom: 1px solid #aaaaaa;
+    color: #222222;
+    background: #fff;
+    font-weight: bold;
+    border-radius: 0!important;
+}
+</style>
+  </div>
+  <div id="tabs-delivery">
+    <div class="sidebar left200px s-inner-sidebar brands_edit" id="s-sidebar">
+    <div class="block">      
+    <ul class="menu-v with-icons deliveryshop_ul deliveryshop_reload">     
+        <li>
+            <a href="?plugin=deliveryshop&module=backend&action=editpvz&id=new">
+                <i class="icon16 add"></i>Добавить ПВЗ
+            </a>
+        </li>  
+        <br />
+        <li>
+            <span class="count">{$pvz.all}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=pvz">
+                <i class="icon16 ss orders-processing"></i>Все
+            </a>
+        </li>  
+        <br />
+        <li data-status="new">
+            <span class="count">{$pvz.new}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=pvz&status=new">
+                <i class="icon16 ss new"></i>Новые
+            </a>
+        </li>
+        <li data-status="completed">
+            <span class="count">{$pvz.completed}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=pvz&status=completed">
+                <i class="icon16 ss completed"></i>Опубликованные
+            </a>
+        </li>
+        <li data-status="flag-white">
+            <span class="count">{$pvz['flag-white']}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=pvz&status=flag-white">
+                <i class="icon16 ss flag-white"></i>Скрытые
+            </a>
+        </li>
+        <li data-status="refunded">
+            <span class="count">{$pvz.refunded}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=pvz&status=refunded">
+                <i class="icon16 ss refunded"></i>Исключенные
+            </a>
+        </li>
+    </ul>
+</div>
+</div>     
+
+<!-- Список звонков -->
+<div class="content left200px blank brands_edit" id="s-content" style="padding-left: 10px;">
+    <div class="block double-padded hide-then-modal-open">
+          <form class="brands-table" id="brands-table">
+          {$wa->csrf()}
+          <table class="zebra prices obzvon-zebra" id="obzvon_table">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Имя</th>
+                        <th style="width: 140px">Город</th>
+                        <th style="width: 140px">Адресс</th>
+                        <th style="padding: 0 10px!important;" class="shorts align-center">Статус ПВЗ</th>
+                        <th class="shorts align-center">Изменить статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {foreach $pvz.data as $c}
+                    <tr data-id="{$c.code}" data-info="delivery">
+                        <td>
+                           <a href="?plugin=deliveryshop&module=backend&action=editpvz&id={$c.code}">{$c.name}</a>
+                        </td>
+                        <td>
+                           <a href="?plugin=deliveryshop&module=backend&action=editpvz&id={$c.code}">{$c.city}</a>    
+                        </td>
+                        <td>
+                           <a href="?plugin=deliveryshop&module=backend&action=editpvz&id={$c.code}">{$c.address}</a>    
+                        </td>
+                        <td class="icon now_status">
+                           <i class="icon16 ss {$c.status}">{$c.status}</i>
+                        </td>
+                        <td class="icon but">
+                           <i class="icon16 ss completed">completed</i>
+                           <i class="icon16 ss flag-white">flag-white</i>
+                           <i class="icon16 ss refunded">refunded</i>
+                        </td>
+                    </tr>
+                {/foreach}   
+                </tbody>
+            </table>
+            </form>
+    </div>
+</div>    
+  
+  </div>
+</div>
+<script>
+$(function() {
+    $( "#tabs" ).tabs();
+    
+    if(getData('tab') == 'pvz')
+    {
+        $('[href="#tabs-delivery"]').click();
+    }
+  });
+
+$(document).ready(function(){    
+   $('.obzvon-zebra .but i').on('click',function(){ 
+        var th = $(this).closest('tr');
+        var id = th.data('id');
+        var g = th.data('info');
+        var status = $(this).text();
+        
+       $.post('?plugin=deliveryshop&module=backend&action=changestatus',{
+        id:id, 
+        status:status, 
+        g:g
+        },function(response){
+           if(response.status == 'ok')
+           {
+                var s = th.find('.now_status i');
+                var st = s.text();
+                s.removeClass(s.text());
+                s.addClass(status);
+                s.text(status);
+                var d = $('#tabs-'+g+' li[data-status='+st+'] span.count').text();
+                $('#tabs-'+g+' li[data-status='+st+'] span.count').text(parseInt(d)-1);
+                var c = $('#tabs-'+g+' li[data-status='+status+'] span.count').text();
+                $('#tabs-'+g+' li[data-status='+status+'] span.count').text(parseInt(c)+1);
+           } 
+       },'json');
+   }); 
+});
+
+function getData( name )
+{
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( window.location.href );
+  if( results == null )
+    return "";
+  else
+    return results[1];
+}
+
+
+</script>

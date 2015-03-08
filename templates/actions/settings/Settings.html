@@ -1,0 +1,131 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+<script type="text/javascript" src="/wa-apps/shop/plugins/deliveryshop/js/jquery-2.1.3.min.js?{$smarty.now|date_format:'%H%M%S'}"></script>
+<script type="text/javascript" src="/wa-apps/shop/plugins/deliveryshop/js/jquery_ui.js?{$smarty.now|date_format:'%H%M%S'}"></script>
+<script>
+$(function() {    
+    $("textarea.sf-template").each(function () {
+            var ids = $(this).attr('id');
+            CodeMirror.fromTextArea(this, {
+                mode: "text/html",
+                tabMode: "indent",
+                height: "dynamic",
+                lineWrapping: true
+            });
+        });
+    
+    $( "#tabs" ).tabs();     
+    });
+</script>
+<h1>Настройки</h1>
+<div class="fields form">
+<hr />
+    <form action="?plugin=deliveryshop&module=settings&action=save" method="post"  id="plugins-settings-form">
+    <div class="field" style="">
+        <div class="name">
+            Статус
+        </div>
+        <div class="value">
+            <select name="settings[status]">
+                <option {if $settings.status == 1} selected="selected"{/if} value="1">Включен</option>
+                <option {if $settings.status == 0} selected="selected"{/if} value="0">Выключен</option>
+            </select>
+        </div>
+    </div> 
+    <br /><br /> 
+    <div id="tabs">
+        <ul>
+            {foreach from=$info key=k item=v}
+                <li><a href="#tabs-{$v.tab_name}">{$k}</a></li>
+            {/foreach}  
+        </ul>
+        {foreach from=$info key=k item=v}
+            <div id="tabs-{$v.tab_name}">   
+                <div class="field">
+                    <div class="name">
+                        Вычетаемая сума из доставки
+                    </div>
+                    <div class="value">
+                        <input type="text" name="prices[{$k}][price]" class="short" value="{$prices[$k].price}" />
+                    </div>
+                </div>         
+                <div class="field">
+                    <div class="name">
+                        Шаблон вывода инфо на витрине магазина<br>
+                        <span class="hint">HTML</span>
+                   </div>
+                   
+                    <div class="value">
+                        <b>Код вывода ссылки </b><br/><br/>
+                        <div id="s-editor-core-wrapper">
+                            <textarea id="sf-template-{$v.tab_name}"  class="body sf-template" name="template[{$k}]">{$template[$k]}</textarea>
+                        </div>
+                    </div>
+                    {if $change_tpl[$k]}
+                    <div class="value">
+                        <p style="padding-left: 20px;"><span class="hint"><i style="left: 0;" class="icon16 exclamation"></i>Внимание! Шаблон по умолчанию был изменен</span><br />
+                        <input type="checkbox" name="reset_tpls[{$k}]" id="reset_tpls" value="1"  /> - Сбросить изменения, использовать шаблон по умолчанию
+                        </p>
+                    </div>
+                    {/if}
+                </div>
+            </div> 
+        {/foreach}
+    </div>   
+    <div class="field">
+        <div class="value submit">
+            <input type="submit" class="button green" value="Сохранить">
+           <!-- <input type="hidden" name="url" value="{$settings.quickUrl}" /> -->
+            <span id="plugins-settings-form-status" style="display:none">
+                <i style="vertical-align:middle" class="icon16 yes"></i> [`Saved`]
+            </span>
+        </div>
+    </div>
+    </form>
+<br />
+<br />
+<h1>Импорт пунктов выдачи</h1>
+<hr />
+<br />
+    <form action="?plugin=deliveryshop&module=settings&action=import" method="post"  id="plugins-settings-form">
+        <div class="field" style="">
+            <div class="name">
+                Импорт ПВЗ 
+            </div>
+            <div class="value submit">
+                <input type="button" name="import" class="button green" value="Импорт"/>
+                <span id="plugins-settings-form-status" style="display:none">
+                
+            </span>
+            </div>
+        </div> 
+    </form>    
+</div>
+<style>
+
+.ui-widget-content { border:none;}
+.ui-widget-header {
+    border:none;
+    border-bottom: 1px solid #aaaaaa;
+    color: #222222;
+    background: #fff;
+    font-weight: bold;
+    border-radius: 0!important;
+}
+</style>
+<script>
+
+$(function() {    
+    $( "#tabs" ).tabs();     
+    });
+    
+$(document).ready(function(){  
+        
+    $('[name=import]').on('click',function(){
+        var th = $(this).closest('form');
+        $.post(th.attr('action'),function(response){
+            th.find('#plugins-settings-form-status').html('<i style="vertical-align:middle" class="icon16 yes"></i> Было добавлено '+response.data.ins+' и обновлено '+response.data.update);
+            th.find('#plugins-settings-form-status').fadeIn(400).delay(2800).fadeOut(1200);   
+    });
+   }); 
+   });
+</script>

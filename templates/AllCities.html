@@ -1,0 +1,27 @@
+<table class="zebra prices obzvon-zebra" id="obzvon_table" >
+        <thead>
+            <tr>
+                <th style="width: 140px;">Регион</th>
+                <th style="width: 140px">Город</th>
+                <th style="width: 140px"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {foreach $data as $c}
+            {if $c.url == ''}
+                {$c.url = $c.city}
+            {/if}
+            <tr>
+                <td>
+                   <a href="{$wa_url}dostavka/{$c.url}">{$c.region}</a>
+                </td>
+                <td>
+                   <a href="{$wa_url}dostavka/{$c.url}">{$c.city}</a>
+                </td>
+                <td>
+                   <a href="{$wa_url}dostavka/{$c.url}">Подробнее...</a>
+                </td>
+            </tr>
+        {/foreach}   
+        </tbody>
+    </table>

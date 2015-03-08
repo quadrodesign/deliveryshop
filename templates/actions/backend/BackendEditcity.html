@@ -1,0 +1,384 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+<link type="text/css" rel="stylesheet" href="{$wa_url}wa-content/js/redactor/redactor.css">
+<script src="{$wa_url}wa-content/js/redactor/redactor.min.js"></script>
+
+{* подключение отдельной локализации, если язык пользователя отличается от английского *}
+{$lang = substr($wa->locale(), 0, 2)}
+{if $lang != 'en'}<script src="{$wa_url}wa-content/js/redactor/{$lang}.js"></script>{/if}
+
+
+<div id="tabs">
+  <ul>
+  {foreach from=$info key=k item=v}
+    <li><a href="#tabs-{$v.tab_name}">{$k}</a></li>
+  {/foreach}  
+  </ul>
+  {foreach from=$info key=k item=v}
+  <div id="tabs-{$v.tab_name}">
+    <div class="sidebar left200px s-inner-sidebar brands_edit" id="s-sidebar">
+    <div class="block">      
+    <ul class="menu-v with-icons deliveryshop_ul deliveryshop_reload">     
+        <li>
+            <a href="?plugin=deliveryshop&module=backend&action=editcity&id=new">
+                <i class="icon16 add"></i>Добавить Город
+            </a>
+        </li>  
+        <br />
+        <li>
+            <span class="count">{$city.all}</span>
+            <a href="?plugin=deliveryshop&action=display">
+                <i class="icon16 ss orders-processing"></i>Все
+            </a>
+        </li>  
+        <br />
+        <li>
+            <span class="count">{$city.new}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=shop&status=new">
+                <i class="icon16 ss new"></i>Новые
+            </a>
+        </li>
+        <li>
+            <span class="count">{$city.completed}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=shop&status=completed">
+                <i class="icon16 ss completed"></i>Опубликованные
+            </a>
+        </li>
+        <li>
+            <span class="count">{$city['flag-white']}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=shop&status=flag-white">
+                <i class="icon16 ss flag-white"></i>Скрытые
+            </a>
+        </li>
+        <li>
+            <span class="count">{$city.refunded}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=shop&status=refunded">
+                <i class="icon16 ss refunded"></i>Исключенные
+            </a>
+        </li>
+    </ul>
+</div>
+</div>
+
+<!-- Список звонков -->
+<div class="content left200px blank brands_edit" id="s-content" style="padding-left: 10px;">
+    <div class="block double-padded hide-then-modal-open">
+          <form>
+            <div class="field" style="">
+                <div class="name">
+                    Регион:
+                </div>
+                <div class="value">
+                    <select name="data[{$k}][region]">
+                    {$i = false}
+                    {foreach $regions as $r}
+                        <option {if $r.name == $v.region}{$i = true} selected="selected"{/if} value="{$r.code}">{$r.name}</option>
+                    {/foreach} 
+                    {if $i == false}
+                        <option  selected="selected" value="{$v.region}">{$v.region}</option>
+                    {/if}   
+                    </select>
+                </div>
+            </div>
+            {if $id == 'new'}
+            <div class="field" style="">
+                <div class="name">
+                    ID Города:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][IDcity]" value="" />                    
+                </div>
+            </div>
+            {/if}
+            <div class="field" style="">
+                <div class="name">
+                    Город:
+                </div>
+                <div class="value">
+                    {if $id == 'new'}
+                    <input type="text" name="data[{$k}][city]" value="" />
+                    {else}
+                    <span style="font-weight: bold; font-size: 14px;">{$v.city}</span>
+                    {/if}
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Url:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][url]" value="{if $v.url == ''}{$v.city}{else}{$v.url}{/if}" />
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    META_Title:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][meta_title]" value="{$v.meta_title}" />
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    META_Keywords:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][meta_keywords]" value="{$v.meta_keywords}"  />
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    META_Description:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][meta_description]" value="{$v.meta_description}"  />
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    ID транспортной компании:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][ID_TK]" value="{$v.ID_TK}"/>
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Сроки доставки в город (пункт вывоза товаров) :
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][delivery_time]" value="{$v.delivery_time}" /> 
+                    <span style="font-weight: bold; color: #FDDA3B; font-size: 12px;">{literal}{$delivery_time}{/literal}</span>
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Стоимость доставки в город:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][delivery_price]" value="{$v.delivery_price}"/> 
+                    <span style="font-weight: bold; color: #09F; font-size: 12px;">{literal}{$delivery_price}{/literal}</span>
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Сроки курьерской доставки:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][courier_time]" value="{$v.courier_time}"/> 
+                    <span style="font-weight: bold; color: #ccc; font-size: 12px;">{literal}{$courier_time}{/literal}</span>
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Стоимость курьерской доставки:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][courier_price]" value="{$v.courier_price}"/> 
+                    <span style="font-weight: bold; color: #F60; font-size: 12px;">{literal}{$courier_price}{/literal}</span>
+                </div>
+            </div>
+            <div class="tabses">
+                <ul>
+                    <li><a href="#tabses-anonsshop">Анонс для страниц магазина</a></li>
+                    <li><a href="#tabses-anonsdelivery">Анонс для страниц Доставки</a></li>
+                    <li><a href="#tabses-description">Описание магазина</a></li>  
+                </ul>
+            <div id="tabses-anonsshop">
+                <div class="field" style="">
+                    <div class="name">
+                        Анонс для страниц магазина:
+                    </div>
+                    <div class="value">
+                        <textarea class="deliveryshop" name="data[{$k}][anons_shop]">{$v.anons_shop}</textarea>
+                        <p>
+                            <button class="button yellow insert_text">{literal}{$delivery_time}{/literal}</button>
+                            <button class="button blue insert_text">{literal}{$delivery_price}{/literal}</button>
+                            <button class="button insert_text">{literal}{$courier_time}{/literal}</button>
+                            <button class="button red insert_text">{literal}{$courier_price}{/literal}</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div id="tabses-anonsdelivery">
+                <div class="field" style="">
+                    <div class="name">
+                        Анонс для страниц Доставки:
+                    </div>
+                    <div class="value">
+                        <textarea class="deliveryshop" name="data[{$k}][anons_delivery]">{$v.anons_delivery}</textarea>
+                        <p>
+                            <button class="button yellow insert_text">{literal}{$delivery_time}{/literal}</button>
+                            <button class="button blue insert_text">{literal}{$delivery_price}{/literal}</button>
+                            <button class="button insert_text">{literal}{$courier_time}{/literal}</button>
+                            <button class="button red insert_text">{literal}{$courier_price}{/literal}</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div id="tabses-description">
+                <div class="field" style="">
+                    <div class="name">
+                        Описание магазина:
+                    </div>
+                    <div class="value">
+                        <textarea class="deliveryshop" name="data[{$k}][description]">{$v.description}</textarea>
+                        <p>
+                            <button class="button yellow insert_text">{literal}{$delivery_time}{/literal}</button>
+                            <button class="button blue insert_text">{literal}{$delivery_price}{/literal}</button>
+                            <button class="button insert_text">{literal}{$courier_time}{/literal}</button>
+                            <button class="button red insert_text">{literal}{$courier_price}{/literal}</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <input type="hidden" name="data[{$k}][id]" value="{$id}"/>
+            <div class="value submit">
+                <input type="submit" class="button green" value="Сохранить">
+                <span class="plugins-settings-form-status" style="display:none">
+                    <i style="vertical-align:middle" class="icon16 yes"></i> Сохранено
+                </span>
+                <span class="plugins-settings-form-stat" style="display:none">
+                    <i style="vertical-align:middle" class="icon16 ss refunded"></i> Не выбран регион
+                </span>
+            </div>
+          </form>
+    </div>
+</div>
+  </div>
+  {/foreach}
+  {if count($pvz.data) > 0}
+   <table class="zebra prices obzvon-zebra" id="obzvon_table" style=" margin-left: 240px;margin-right: 40px; margin-bottom: 40px;width: 70%;">
+        <thead>
+            <tr>
+                <th style="width: 140px;">Имя</th>
+                <th style="width: 140px">Город</th>
+                <th style="width: 140px">Адресс</th>
+                <th style="padding: 0 10px!important;" class="shorts align-center">Статус ПВЗ</th>
+                <th class="shorts align-center">Изменить статус</th>
+            </tr>
+        </thead>
+        <tbody>
+        {foreach $pvz.data as $c}
+            <tr data-id="{$c.code}" data-info="delivery">
+                <td>
+                   <a href="?plugin=deliveryshop&module=backend&action=editpvz&id={$c.code}">{$c.name}</a>
+                </td>
+                <td>
+                   <a href="?plugin=deliveryshop&module=backend&action=editpvz&id={$c.code}">{$c.city}</a>    
+                </td>
+                <td>
+                   <a href="?plugin=deliveryshop&module=backend&action=editpvz&id={$c.code}">{$c.address}</a>    
+                </td>
+                <td class="icon now_status">
+                   <i class="icon16 ss {$c.status}">{$c.status}</i>
+                </td>
+                <td class="icon but">
+                   <i class="icon16 ss completed">completed</i>
+                   <i class="icon16 ss flag-white">flag-white</i>
+                   <i class="icon16 ss refunded">refunded</i>
+                </td>
+            </tr>
+        {/foreach}   
+        </tbody>
+    </table>
+    {/if}
+    
+</div>
+<style>
+
+.redactor-editor{ height: 250px;}
+.redactor-box{ border:1px solid #ccc; box-shadow: 0 0 5px #ccc; }
+
+.obzvon-zebra th,.obzvon-zebra td{ line-height: 24px; border-right: 1px solid #ccc!important;}
+.obzvon-zebra td{ border-right: 1px solid white!important; padding: 2px 1px 0 15px!important;}
+.obzvon-zebra td.icon{ text-align: center; padding: 5px 0 0 15px!important;}
+.obzvon-zebra td i{ cursor: pointer;}
+.obzvon-zebra th.shorts{ width: 70px!important; text-align: center;}
+
+.new-obzvon-status{ position:relative;}
+.wrap-new-obzvon{ position:; display: none; border: 1px solid #ccc; padding: 5px; margin: 10px 0;}
+.obzvon_status_exists i,.edit { cursor: pointer; }
+
+.wrap-new-obzvon ul{ padding: 10px 5px; text-align: center;}
+.wrap-new-obzvon li { display: inline-block!important;  min-width: 1px!important; margin-right: 8px!important;}
+.obzvon_ul > li:hover > i.delete { display: inline-block!important; cursor: pointer;}
+.obzvon_status_exists i { margin: 4px;}
+
+.ui-widget-content { border:none;}
+.ui-widget-header {
+    border:none;
+    border-bottom: 1px solid #aaaaaa;
+    color: #222222;
+    background: #fff;
+    font-weight: bold;
+    border-radius: 0!important;
+}
+</style>
+<script>
+$(function() {
+    $( "#tabs" ).tabs();
+    $( ".tabses" ).tabs();
+    $('.deliveryshop').redactor({
+        focus: true,
+        buttonSource: true
+    });
+  });
+
+$(document).ready(function(){  
+    
+    $('.insert_text').on('click', function(e){
+        e.preventDefault();
+        var html = $(this).html();
+        $(this).closest('div').find('.deliveryshop').redactor('insert.html',html);
+        //$(this).closest('div').find('.redactor-editor').insertAtCaret('{literal}{$courier_price}{/literal}'); 
+    });
+    
+    $('.obzvon-zebra .but i').on('click',function(){ 
+        var th = $(this).closest('tr');
+        var id = th.data('id');
+        var g = th.data('info');
+        var status = $(this).text();
+        
+       $.post('?plugin=deliveryshop&module=backend&action=changestatus',{
+        id:id, 
+        status:status, 
+        g:g
+        },function(response){
+           if(response.status == 'ok')
+           {
+                var s = th.find('.now_status i');
+                var st = s.text();
+                s.removeClass(s.text());
+                s.addClass(status);
+                s.text(status);
+                var d = $('#tabs-'+g+' li[data-status='+st+'] span.count').text();
+                $('#tabs-'+g+' li[data-status='+st+'] span.count').text(parseInt(d)-1);
+                var c = $('#tabs-'+g+' li[data-status='+status+'] span.count').text();
+                $('#tabs-'+g+' li[data-status='+status+'] span.count').text(parseInt(c)+1);
+           } 
+       },'json');
+   }); 
+    
+    $('input[type=submit]').on('click',function(e){
+        e.preventDefault();
+        var form = $(this).closest('form');
+       $.post('?plugin=deliveryshop&module=backend&action=savecity', form.serialize() ,function(response){
+            if(response.status == 'ok')
+            {
+                if(response.data.stat)
+                {
+                    form.find('.plugins-settings-form-stat').fadeIn(800).delay(1000).fadeOut(600);
+                }
+                else
+                {
+                    form.find('.plugins-settings-form-status').fadeIn(800).delay(1000).fadeOut(600);
+                }
+            }
+       },'json'); 
+    });
+});
+
+</script>

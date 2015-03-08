@@ -1,0 +1,36 @@
+<script src="//api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU"></script>
+<h1>Кеды в городе {$data.city}, ускоренная доставка и магазины самовывоза</h1>
+<h2>Купить кеды в городе {$data.city} Вы можете в наших пунктах самовывоза по адресам:</h2>
+<ul>
+  {foreach $pvz as $p}
+    <li><a href="#{$p.code}">{$p.name}</a></li>
+  {/foreach}
+</ul>
+<p>Также мы можем  доставить кеды по городу {$data.city} курьером или Почтой России. Уже через {$data.delivery_time} дня после заказа Вы можете забрать кеды из нашего пункта самовывоза или курьер  доставит их по удобному для Вас адресу.</p>
+<p>Оплатить покупку Вы можете заранее или при получении кед (в пункте самовывоза, курьеру или на почте).</p>
+<h2>Стоимость доставки кед в город {$data.city}:</h2>
+<ul>
+  <li>Кеды курьером &mdash; {$data.courier_price} (доставка  через {$data.courier_time} рабочих дня после заказа).</li>
+  <li>Купить кеды в городе {$data.city} в пункте самовывоза &mdash; <strong>{$data.delivery_price}</strong> (кеды на пункте самовывоза через {$data.delivery_time} рабочих дня после заказа).</li>
+  <li>Доставка кед в {$data.city} Почтой России &mdash; <strong>БЕСПЛАТНО!</strong> (доставка кед в течении 12-20 дней).</li>
+</ul>
+
+{foreach $pvz as $p}
+  <h3 id="{$p.code}">Пункт самовывоза {$p.name}</h3>
+  <h5>Адрес</h5><p>{$p.address}</p>
+  <h5>Режим работы</h5><p>{$p.workTime}</p>
+  <h5>Телефон</h5><p>{$p.phone}</p>
+  <h5>Схема проезда</h5>
+<div id="myMap_{$p.code}" style="width: 600px; height: 300px;"></div>
+<hr>
+<script type="text/javascript">
+  var myMap;
+  ymaps.ready(function () {
+    myMap = new ymaps.Map(
+      "myMap_{$p.code}", { center: [{$p.coordY}, {$p.coordX}],
+        zoom: 15 });
+    var myPlacemark = new ymaps.Placemark([{$p.coordY}, {$p.coordX}]);
+    myMap.geoObjects.add(myPlacemark);
+  });
+</script>
+{/foreach}

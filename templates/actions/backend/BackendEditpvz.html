@@ -1,0 +1,325 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+<link type="text/css" rel="stylesheet" href="{$wa_url}wa-content/js/redactor/redactor.css">
+<script src="{$wa_url}wa-content/js/redactor/redactor.min.js"></script>
+
+{* подключение отдельной локализации, если язык пользователя отличается от английского *}
+{$lang = substr($wa->locale(), 0, 2)}
+{if $lang != 'en'}<script src="{$wa_url}wa-content/js/redactor/{$lang}.js"></script>{/if}
+
+
+<div id="tabs">
+  <ul>
+  {foreach from=$info key=k item=v}
+    <li><a href="#tabs-{$v.tab_name}">{$k}</a></li>
+  {/foreach}  
+  </ul>
+  {foreach from=$info key=k item=v}
+  <div id="tabs-{$v.tab_name}">
+    <div class="sidebar left200px s-inner-sidebar brands_edit" id="s-sidebar">
+    <div class="block">      
+    <ul class="menu-v with-icons deliveryshop_ul deliveryshop_reload">     
+        <li>
+            <a href="?plugin=deliveryshop&module=backend&action=editpvz&id=new">
+                <i class="icon16 add"></i>Добавить ПВЗ
+            </a>
+        </li>  
+        <br />
+        <li>
+            <span class="count">{$pvz.all}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=pvz">
+                <i class="icon16 ss orders-processing"></i>Все
+            </a>
+        </li>  
+        <br />
+        <li data-status="new">
+            <span class="count">{$pvz.new}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=pvz&status=new">
+                <i class="icon16 ss new"></i>Новые
+            </a>
+        </li>
+        <li data-status="completed">
+            <span class="count">{$pvz.completed}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=pvz&status=completed">
+                <i class="icon16 ss completed"></i>Опубликованные
+            </a>
+        </li>
+        <li data-status="flag-white">
+            <span class="count">{$pvz['flag-white']}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=pvz&status=flag-white">
+                <i class="icon16 ss flag-white"></i>Скрытые
+            </a>
+        </li>
+        <li data-status="refunded">
+            <span class="count">{$pvz.refunded}</span>
+            <a href="?plugin=deliveryshop&action=display&tab=pvz&status=refunded">
+                <i class="icon16 ss refunded"></i>Исключенные
+            </a>
+        </li>
+    </ul>
+</div>
+</div>
+
+<!-- Список звонков -->
+<div class="content left200px blank brands_edit" id="s-content" style="padding-left: 10px;">
+    <div class="block double-padded hide-then-modal-open">
+          <form>
+          {if is_array($v.city)}
+            <div class="field" style="">
+                <div class="name">
+                    Код ПВЗ:
+                </div>
+                <div class="value">
+                        <input type="text" name="data[{$k}][code]" value="" />
+                </div>
+            </div>
+            {/if}
+            <div class="field" style="">
+                <div class="name">
+                    Имя:
+                </div>
+                <div class="value">
+                    {if is_array($v.city)}
+                        <input type="text" name="data[{$k}][name]" value="" />
+                    {else}
+                        <span style="font-weight: bold; font-size: 14px;">{$v.name}</span>
+                    {/if}
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Город:
+                </div>
+                <div class="value">
+                
+                    {if is_array($v.city)}
+                        <select name="data[{$k}][city]">
+                            <option  value="">Выберите город...</option>
+                        {foreach from =$v.city key=key item=val}
+                            <option  value="{$key}">{$val.city}</option>
+                        {/foreach}
+                        </select>
+                    {else}
+                    <span style="font-weight: bold; font-size: 14px;">{$v.city}</span>
+                    {/if}
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Адресс:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][address]" value="{$v.address}" />
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Часы работы:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][workTime]" value="{$v.workTime}"  />
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Телефон:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][phone]" value="{$v.phone}"  />
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    E-mail:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][email]" value="{$v.email}"/>
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Транспортная компания:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][TK]" value="{$v.TK}" />
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Примечание:
+                </div>
+                <div class="value">
+                    <input type="text" name="data[{$k}][note]" value="{$v.note}"/>
+                </div>
+            </div>
+            {if is_array($v.city)}
+            <div class="field" style="">
+                <div class="name">
+                    Координаты X:
+                </div>
+                <div class="value">
+                        <input type="text" name="data[{$k}][coordX]" value="" />
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Координаты Y:
+                </div>
+                <div class="value">
+                        <input type="text" name="data[{$k}][coordY]" value="" />
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Минимальный вес:
+                </div>
+                <div class="value">
+                        <input type="text" name="data[{$k}][weightMin]" value="" />
+                </div>
+            </div>
+            <div class="field" style="">
+                <div class="name">
+                    Максимальный вес:
+                </div>
+                <div class="value">
+                        <input type="text" name="data[{$k}][weightMax]" value="" />
+                </div>
+            </div>
+            {/if}
+            <input type="hidden" name="data[{$k}][id]" value="{$id}"/>
+            <div class="value submit">
+                <input type="submit" class="button green" value="Сохранить">
+                <span class="plugins-settings-form-status" style="display:none">
+                    <i style="vertical-align:middle" class="icon16 yes"></i> Сохранено
+                </span>
+                <span class="plugins-settings-form-stat" style="display:none">
+                    <i style="vertical-align:middle" class="icon16 ss refunded"></i> Не выбран город
+                </span>
+            </div>
+          </form>
+    </div>
+</div>
+  </div>
+  {/foreach}
+  {if count($pv.data) > 0}
+   <table class="zebra prices obzvon-zebra" id="obzvon_table" style=" margin-left: 240px;margin-right: 40px; margin-bottom: 40px;width: 70%;">
+        <thead>
+            <tr>
+                <th style="width: 140px;">Имя</th>
+                <th style="width: 140px">Город</th>
+                <th style="width: 140px">Адресс</th>
+                <th style="padding: 0 10px!important;" class="shorts align-center">Статус ПВЗ</th>
+                <th class="shorts align-center">Изменить статус</th>
+            </tr>
+        </thead>
+        <tbody>
+        {foreach $pv.data as $c}
+            <tr data-id="{$c.code}" data-info="delivery">
+                <td>
+                   <a href="?plugin=deliveryshop&module=backend&action=editpvz&id={$c.code}">{$c.name}</a>
+                </td>
+                <td>
+                   <a href="?plugin=deliveryshop&module=backend&action=editpvz&id={$c.code}">{$c.city}</a>    
+                </td>
+                <td>
+                   <a href="?plugin=deliveryshop&module=backend&action=editpvz&id={$c.code}">{$c.address}</a>    
+                </td>
+                <td class="icon now_status">
+                   <i class="icon16 ss {$c.status}">{$c.status}</i>
+                </td>
+                <td class="icon but">
+                   <i class="icon16 ss completed">completed</i>
+                   <i class="icon16 ss flag-white">flag-white</i>
+                   <i class="icon16 ss refunded">refunded</i>
+                </td>
+            </tr>
+        {/foreach}   
+        </tbody>
+    </table>
+  {/if}
+</div>
+<style>
+.obzvon-zebra th,.obzvon-zebra td{ line-height: 24px; border-right: 1px solid #ccc!important;}
+.obzvon-zebra td{ border-right: 1px solid white!important; padding: 2px 1px 0 15px!important;}
+.obzvon-zebra td.icon{ text-align: center; padding: 5px 0 0 15px!important;}
+.obzvon-zebra td i{ cursor: pointer;}
+.obzvon-zebra th.shorts{ width: 70px!important; text-align: center;}
+
+.new-obzvon-status{ position:relative;}
+.wrap-new-obzvon{ position:; display: none; border: 1px solid #ccc; padding: 5px; margin: 10px 0;}
+.obzvon_status_exists i,.edit { cursor: pointer; }
+
+.wrap-new-obzvon ul{ padding: 10px 5px; text-align: center;}
+.wrap-new-obzvon li { display: inline-block!important;  min-width: 1px!important; margin-right: 8px!important;}
+.obzvon_ul > li:hover > i.delete { display: inline-block!important; cursor: pointer;}
+.obzvon_status_exists i { margin: 4px;}
+
+.ui-widget-content { border:none;}
+.ui-widget-header {
+    border:none;
+    border-bottom: 1px solid #aaaaaa;
+    color: #222222;
+    background: #fff;
+    font-weight: bold;
+    border-radius: 0!important;
+}
+</style>
+<script>
+$(function() {
+    $( "#tabs" ).tabs();
+    $('.deliveryshop').redactor();
+  });
+
+$(document).ready(function(){  
+    
+    $('.obzvon-zebra .but i').on('click',function(){ 
+        var th = $(this).closest('tr');
+        var id = th.data('id');
+        var g = th.data('info');
+        var status = $(this).text();
+        
+       $.post('?plugin=deliveryshop&module=backend&action=changestatus',{
+        id:id, 
+        status:status, 
+        g:g
+        },function(response){
+           if(response.status == 'ok')
+           {
+                var s = th.find('.now_status i');
+                var st = s.text();
+                s.removeClass(s.text());
+                s.addClass(status);
+                s.text(status);
+                var d = $('#tabs li[data-status='+st+'] span.count:first').text();
+                $('#tabs li[data-status='+st+'] span.count').each(function(){
+                    $(this).text(parseInt(d)-1);
+                });
+                var c = $('#tabs li[data-status='+status+'] span.count:first').text();
+                $('#tabs li[data-status='+status+'] span.count').each(function(){
+                    $(this).text(parseInt(c)+1);
+                });
+           } 
+       },'json');
+   }); 
+    
+    $('input[type=submit]').on('click',function(e){
+        e.preventDefault();
+        var form = $(this).closest('form');
+       $.post('?plugin=deliveryshop&module=backend&action=savepvz', form.serialize() ,function(response){
+            if(response.status == 'ok')
+            {
+                if(response.data.stat)
+                {
+                    form.find('.plugins-settings-form-stat').fadeIn(800).delay(1000).fadeOut(600);
+                }
+                else
+                {
+                    form.find('.plugins-settings-form-status').fadeIn(800).delay(1000).fadeOut(600);
+                }
+            }
+       },'json'); 
+    });
+});
+
+</script>
