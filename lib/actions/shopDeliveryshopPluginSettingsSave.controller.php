@@ -23,8 +23,6 @@ class shopDeliveryshopPluginSettingsSaveController extends waJsonController {
             
             foreach($domains as $d)
             {
-                $tab = explode('.', $d['name']);
-                
                 $id_price = $model->query("SELECT id FROM shop_deliveryshop_delivery WHERE domain = '".$d['name']."'")->fetchField();
                 if($id_price)
                 {
@@ -37,20 +35,20 @@ class shopDeliveryshopPluginSettingsSaveController extends waJsonController {
                 }
                 
                 if (isset($reset_tpls[$d['name']])) {
-                    $template_path = wa()->getDataPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka'.ucfirst($tab[0]).'.html', false, 'shop', true);
+                  $template_path = wa()->getDataPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka' . $d['id'] . '.html', false, 'shop', true);
                     @unlink($template_path);
                 } else {
                     if (!isset($template[$d['name']])) {
                         throw new waException('Не определён шаблон');
                     }
-                    $template_path = wa()->getDataPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka'.ucfirst($tab[0]).'.html', false, 'shop', true);
+                  $template_path = wa()->getDataPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka' . $d['id'] . '.html', false, 'shop', true);
                     if (!file_exists($template_path)) {
                         $template_path = wa()->getAppPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka.html', 'shop');
                     }
     
                     $template_content = file_get_contents($template_path);
                     if ($template_content != $template[$d['name']]) {
-                        $template_path = wa()->getDataPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka'.ucfirst($tab[0]).'.html', false, 'shop', true);
+                      $template_path = wa()->getDataPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka' . $d['id'] . '.html', false, 'shop', true);
     
                         $f = fopen($template_path, 'w');
                         if (!$f) {

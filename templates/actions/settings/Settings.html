@@ -2,23 +2,73 @@
 <script type="text/javascript" src="/wa-apps/shop/plugins/deliveryshop/js/jquery-2.1.3.min.js?{$smarty.now|date_format:'%H%M%S'}"></script>
 <script type="text/javascript" src="/wa-apps/shop/plugins/deliveryshop/js/jquery_ui.js?{$smarty.now|date_format:'%H%M%S'}"></script>
 <script>
-$(function() {    
+  $(function () {
+    var $mirror = {};
     $("textarea.sf-template").each(function () {
             var ids = $(this).attr('id');
-            CodeMirror.fromTextArea(this, {
+      $mirror[ids] = CodeMirror.fromTextArea(this, {
                 mode: "text/html",
                 tabMode: "indent",
                 height: "dynamic",
                 lineWrapping: true
-            });
+      });
         });
-    
-    $( "#tabs" ).tabs();     
+
+//    var text = editor.getValue();
+//            alert(text);
+
+    $("#tabs").tabs();
+
+    $('[name=import]').on('click', function (e) {
+      e.preventDefault();
+      var th = $(this).closest('form');
+      $.post(th.attr('action'), function (response) {
+        th.find('#plugins-settings-form-status').html('<i style="vertical-align:middle" class="icon16 yes"></i> Было добавлено ' + response.data.ins + ' и обновлено ' + response.data.update);
+        th.find('#plugins-settings-form-status').fadeIn(400).delay(2800).fadeOut(1200);
+      }, 'json');
     });
+
+    $('[name=save]').on('click', function (e) {
+      e.preventDefault();
+      var th = $(this).closest('form');
+
+      $("textarea.sf-template").each(function () {
+        var ids = $(this).attr('id');
+        $mirror[ids].save();
+      });
+      $.post(th.attr('action'), th.serialize(), function (response) {
+        th.find('#plugins-settings-form-status').fadeIn(400).delay(2800).fadeOut(1200);
+      }, 'json');
+    });
+
+
+  });
 </script>
-<h1>Настройки</h1>
+
 <div class="fields form">
+  <br/>
+
+  <h1>Импорт пунктов выдачи</h1>
 <hr />
+  <form action="?plugin=deliveryshop&module=settings&action=import" method="post">
+    <div class="field" style="">
+      <div class="name">
+        Импорт ПВЗ
+      </div>
+      <div class="value submit">
+        <input type="submit" name="import" class="button green" value="Импорт"/>
+                <span id="plugins-settings-form-status" style="display:none">
+                
+            </span>
+      </div>
+    </div>
+  </form>
+
+  <hr/>
+  <br/>
+
+  <h1>Настройки</h1>
+  <hr/>
     <form action="?plugin=deliveryshop&module=settings&action=save" method="post"  id="plugins-settings-form">
     <div class="field" style="">
         <div class="name">
@@ -26,8 +76,10 @@ $(function() {
         </div>
         <div class="value">
             <select name="settings[status]">
-                <option {if $settings.status == 1} selected="selected"{/if} value="1">Включен</option>
-                <option {if $settings.status == 0} selected="selected"{/if} value="0">Выключен</option>
+              <option {if $settings.status== 1} selected="selected" {
+              /if} value="1">Включен</option>
+              <option {if $settings.status== 0} selected="selected" {
+              /if} value="0">Выключен</option>
             </select>
         </div>
     </div> 
@@ -73,32 +125,16 @@ $(function() {
     </div>   
     <div class="field">
         <div class="value submit">
-            <input type="submit" class="button green" value="Сохранить">
+          <input type="submit" name="save" class="button green" value="Сохранить">
            <!-- <input type="hidden" name="url" value="{$settings.quickUrl}" /> -->
             <span id="plugins-settings-form-status" style="display:none">
-                <i style="vertical-align:middle" class="icon16 yes"></i> [`Saved`]
+                <i style="vertical-align:middle" class="icon16 yes"></i> Сохранено
             </span>
         </div>
     </div>
     </form>
 <br />
-<br />
-<h1>Импорт пунктов выдачи</h1>
-<hr />
-<br />
-    <form action="?plugin=deliveryshop&module=settings&action=import" method="post"  id="plugins-settings-form">
-        <div class="field" style="">
-            <div class="name">
-                Импорт ПВЗ 
-            </div>
-            <div class="value submit">
-                <input type="button" name="import" class="button green" value="Импорт"/>
-                <span id="plugins-settings-form-status" style="display:none">
-                
-            </span>
-            </div>
-        </div> 
-    </form>    
+
 </div>
 <style>
 
@@ -112,20 +148,3 @@ $(function() {
     border-radius: 0!important;
 }
 </style>
-<script>
-
-$(function() {    
-    $( "#tabs" ).tabs();     
-    });
-    
-$(document).ready(function(){  
-        
-    $('[name=import]').on('click',function(){
-        var th = $(this).closest('form');
-        $.post(th.attr('action'),function(response){
-            th.find('#plugins-settings-form-status').html('<i style="vertical-align:middle" class="icon16 yes"></i> Было добавлено '+response.data.ins+' и обновлено '+response.data.update);
-            th.find('#plugins-settings-form-status').fadeIn(400).delay(2800).fadeOut(1200);   
-    });
-   }); 
-   });
-</script>

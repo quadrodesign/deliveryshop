@@ -1,6 +1,7 @@
 <?php
 return array (
   'name' => 'DeliveryShop',
+  'description' => 'ОПИСАНИЕ ПЛАГИНА',
   'icon' => 'img/deliveryshop.gif',
   'shop_settings' => true,
   'handlers' => 

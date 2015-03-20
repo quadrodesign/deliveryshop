@@ -16,8 +16,8 @@ class shopDeliveryshopPluginSettingsAction extends waViewAction
             {
                 $tab = explode('.', $d['name']);
                 $info[$d['name']]['tab_name'] = $tab[0];
-                
-                $template_path = wa()->getDataPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka'.ucfirst($tab[0]).'.html', false, 'shop', true);
+
+              $template_path = wa()->getDataPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka' . $d['id'] . '.html', false, 'shop', true);
                 $change_tpl[$d['name']] = true;
                 if (!file_exists($template_path)) 
                 {

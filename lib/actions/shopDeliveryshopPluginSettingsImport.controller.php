@@ -52,15 +52,15 @@ class shopDeliveryshopPluginSettingsImportController extends waJsonController {
                     }
                     else
                     {
-                        $model->query("INSERT INTO shop_deliveryshop_city
+                      $model->query("INSERT INTO shop_deliveryshop_city
                                        (cityCode, city, region, status)
                                         VALUES ('".mysql_escape_string((string)$pvz[0]['CityCode'])."',
                                         '".mysql_escape_string((string)$pvz[0]['City'])."', '".$region."', 'new')");
                     }
 
-                    if($id)
+                  if ($id)
                     {
-                        $model->query("UPDATE shop_deliveryshop_pvz SET
+                      $model->query("UPDATE shop_deliveryshop_pvz SET
                                        code='".mysql_escape_string((string)$pvz['Code'])."',
                                        name='".mysql_escape_string((string)$pvz[0]['Name'])."',
                                        cityCode='".mysql_escape_string((string)$pvz[0]['CityCode'])."',
@@ -74,11 +74,11 @@ class shopDeliveryshopPluginSettingsImportController extends waJsonController {
                                        weightMin='".mysql_escape_string((string)$weight['WeightMin'])."',
                                        weightMax='".mysql_escape_string((string)$weight['WeightMax'])."'
                                        WHERE id='".$id."'");
-                        $update++;
+                      $update++;
                     }
                     else
                     {
-                        $model->query("INSERT INTO shop_deliveryshop_pvz
+                      $model->query("INSERT INTO shop_deliveryshop_pvz
                                        (code, name, cityCode, city, workTime, address, phone, note, coordX, coordY, weightMin, weightMax, status)
                                         VALUES ('".mysql_escape_string((string)$pvz['Code'])."',
                                         '".mysql_escape_string((string)$pvz[0]['Name'])."',

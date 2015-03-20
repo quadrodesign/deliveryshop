@@ -1,5 +1,4 @@
 <?php
-
 class shopDeliveryshopPluginFrontendDostavkaAction extends shopFrontendAction
 {
   public function execute()
@@ -35,7 +34,13 @@ class shopDeliveryshopPluginFrontendDostavkaAction extends shopFrontendAction
       }
     }
 
-    $template_path = wa()->getDataPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka.html', false, 'shop', true);
+    $idDomain = $model->query("SELECT id FROM site_domain WHERE name = '" . $domain . "'")->fetchField();
+
+    $template_path = wa()->getDataPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka' . $idDomain . '.html', false, 'shop', true);
+    if (!file_exists($template_path)) {
+      $template_path = wa()->getDataPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka.html', false, 'shop', true);
+    }
+
     if (!file_exists($template_path)) {
       $template_path = wa()->getAppPath('plugins/deliveryshop/templates/actions/frontend/FrontendDostavka.html', 'shop');
     }
