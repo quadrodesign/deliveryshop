@@ -31,17 +31,7 @@
 {/if}
 <a id="courier-delivery"></a>
 <h2>Доставка кед Vans по городу {$data.city} курьером</h2>
-<p>Мы доставляем кеды Ванс курьером по городу {$data.city}
-    {if $data.courier_price == 0}
-        <strong>БЕСПЛАТНО</strong>
-        !
-    {else}
-        всего за
-        <strong>{$data.courier_price} рублей</strong>
-        .
-    {/if}
-    <br>Курьер доставит кеды по удобному для Вас адресу{if $data.courier_time != ''} уже через {$data.courier_time} после заказа{/if}.
-</p>
+<p>Мы доставляем кеды Ванс курьером по городу {$data.city} {if $data.courier_price == 0}<strong>БЕСПЛАТНО</strong>!{else}всего за <strong>{$data.courier_price} рублей</strong>.{/if}<br>Курьер доставит кеды по удобному для Вас адресу{if $data.courier_time != ''} уже через {$data.courier_time} после заказа{/if}.</p>
 
 <a id="post-delivery"></a>
 <h2>Доставка кед Ванс в город {$data.city} Почтой России</h2>

@@ -28,13 +28,13 @@ class shopDeliveryshopPluginFrontendDostavkaAction extends shopFrontendAction
     $delivery_price = intval($data['delivery_price']);
     $courier_price = intval($data['courier_price']);
     if ($delivery_price > $delivery_compensation){
-      $data['delivery_price'] = $delivery_price - $delivery_compensation;
+      $data['delivery_price'] = (int)(($delivery_price - $delivery_compensation)/50) * 50; //Уменьшаем до ближайшего полтинника
     } else{
       $data['delivery_price'] = 0;
     }
 
     if ($courier_price > $delivery_compensation){
-      $data['courier_price'] = $courier_price - $delivery_compensation;
+      $data['courier_price'] = (int)(($courier_price - $delivery_compensation)/50) * 50; //Уменьшаем до ближайшего полтинника
     } else{
       $data['courier_price'] = 0;
     }
