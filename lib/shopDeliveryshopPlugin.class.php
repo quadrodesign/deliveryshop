@@ -13,66 +13,52 @@ class shopDeliveryshopPlugin extends shopPlugin
     return array('core_li' => $html);
   }
 
-  public function displayAll()
+  public static function displayAll()
   {
     $domain = waRequest::server('HTTP_HOST');
-//        $template_path = wa()->getAppPath('plugins/deliveryshop/templates/AllCities.html', 'shop');
 
     $model = new waModel();
     $delivery_compensation = $model->query("SELECT price FROM shop_deliveryshop_delivery WHERE domain = '" . $domain . "'")->fetchField();
     $delivery_compensation = intval($delivery_compensation);
 
-    $data = $model->query("SELECT * FROM shop_deliveryshop_city WHERE status = 'completed'")->fetchAll('cityCode');
+    $data = $model->query("SELECT * FROM shop_deliveryshop_city LEFT JOIN shop_deliveryshop_city_description ON shop_deliveryshop_city_description.cityCode = shop_deliveryshop_city.cityCode WHERE status = 'completed' ORDER BY city ASC" )->fetchAll();
 
-//TODO: Загружать данные по городам одним запросом, сейчас на каждый город делаем несколько запросов в базу
-    foreach ($data as $k => $v) {
-      $desc = $model->query("SELECT * FROM shop_deliveryshop_city_description WHERE cityCode = '" . $k . "' AND domain = '" . $domain . "'")->fetchAssoc();
-      if (!$desc) {
-        $desc = array();
-      } else {
-        $delivery_price = intval($desc['delivery_price']);
-        $courier_price = intval($desc['courier_price']);
+    foreach ($data as &$city) {
 
-// Вычитаем компенсацию магазина и из стоимости доставки курьером
-        if ($delivery_price > $delivery_compensation) {
-          $desc['delivery_price'] = (int)(($delivery_price - $delivery_compensation) / 50) * 50; //Уменьшаем до ближайшего полтинника
+// Вычитаем компенсацию магазина и из стоимости всех видов доставок
+      $array_price = array ('delivery_price', 'courier_price');
+      foreach ($array_price as $price_name){
+        $price_value = intval($city[$price_name]);
+        if ($price_value > $delivery_compensation) {
+          $city[$price_name] = (int)(($price_value - $delivery_compensation) / 50) * 50; //Уменьшаем до ближайшего полтинника
         } else {
-          $desc['delivery_price'] = 0;
+          $city[$price_name] = 0;
         }
-
-        if ($courier_price > $delivery_compensation) {
-          $desc['courier_price'] = (int)(($courier_price - $delivery_compensation) / 50) * 50; //Уменьшаем до ближайшего полтинника
-        } else {
-          $desc['courier_price'] = 0;
-        }
-
-        $delivery_time = '{$delivery_time}';
-        $delivery_price = '{$delivery_price}';
-        $courier_time = '{$courier_time}';
-        $courier_price = '{$courier_price}';
-
-        $desc['description'] = str_replace($delivery_time, $desc['delivery_time'], $desc['description']);
-        $desc['description'] = str_replace($delivery_price, $desc['delivery_price'], $desc['description']);
-        $desc['description'] = str_replace($courier_time, $desc['courier_time'], $desc['description']);
-        $desc['description'] = str_replace($courier_price, $desc['courier_price'], $desc['description']);
-
-        $desc['anons_shop'] = str_replace($delivery_time, $desc['delivery_time'], $desc['anons_shop']);
-        $desc['anons_shop'] = str_replace($delivery_price, $desc['delivery_price'], $desc['anons_shop']);
-        $desc['anons_shop'] = str_replace($courier_time, $desc['courier_time'], $desc['anons_shop']);
-        $desc['anons_shop'] = str_replace($courier_price, $desc['courier_price'], $desc['anons_shop']);
-
-        $desc['anons_delivery'] = str_replace($delivery_time, $desc['delivery_time'], $desc['anons_delivery']);
-        $desc['anons_delivery'] = str_replace($delivery_price, $desc['delivery_price'], $desc['anons_delivery']);
-        $desc['anons_delivery'] = str_replace($courier_time, $desc['courier_time'], $desc['anons_delivery']);
-        $desc['anons_delivery'] = str_replace($courier_price, $desc['courier_price'], $desc['anons_delivery']);
-      }
-      $data[$k] = array_merge($data[$k], $desc);
-      if (is_numeric($data[$k]['region'])) {
-        $data[$k]['region'] = $model->query("SELECT name FROM wa_region WHERE code='" . $data[$k]['region'] . "' AND country_iso3='rus'")->fetchField();
       }
 
-      $data[$k]['url'] = $data[$k]['url'] ? $data[$k]['url'] : $data[$k]['city'];
-      $data[$k]['url'] = wa()->getRouteUrl('shop/frontend/dostavka', array('url' => $data[$k]['url']));
+      $array_variables = array('delivery_time', 'delivery_price', 'courier_time', 'courier_price');
+      $array_search = array();
+      $array_replace = array();
+      foreach ($array_variables as $var) {
+        if (array_key_exists($var, $city)) {
+          $array_search[] = '{$' . $var . '}';
+          $array_replace[] = $city[$var];
+        }
+      }
+
+      $array_fields = array('description', 'anons_shop', 'anons_delivery');
+      foreach ($array_fields as $field) {
+        if (array_key_exists($field, $city)) {
+          $city[$field] = str_replace($array_search, $array_replace, $city[$field]);
+        } else {
+          $city[$field] = '';
+        }
+      }
+      if (is_numeric($city['region'])) {
+        $city['region'] = $model->query("SELECT name FROM wa_region WHERE code='" . $city['region'] . "' AND country_iso3='rus'")->fetchField();
+      }
+
+      $city['url'] = wa()->getRouteUrl('shop/frontend/dostavka', array('url' => ($city['url'] ? $city['url'] : $city['city']) ));
     }
 
     return $data;
