@@ -1,36 +1,74 @@
-<script src="//api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU"></script>
-<h1>Кеды в городе {$data.city}, ускоренная доставка и магазины самовывоза</h1>
-<h2>Купить кеды в городе {$data.city} Вы можете в наших пунктах самовывоза по адресам:</h2>
+<script src="//api-maps.yandex.ru/2.1/?load=package.full&lang=ru_RU" type="text/javascript"></script>
+<style>
+    .delivery-map {
+        width: 500px !important;
+        height: 300px !important;
+        border: 1px solid black;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    @media (max-width: 768px){
+        .delivery-map {
+            width: 100% !important;
+        }
+    }
+</style>
+
+<h1>Как купить кеды Vans в городе {$data.city}</h1>
+<p>Оплатить покупку Вы можете заранее или при получении кед (<a href="#express-delivery">в пункте самовывоза</a>,
+    <a href="#courier-delivery">курьеру</a> или <a href="#post-delivery">на почте</a>).</p>
+<a id="express-delivery"></a>
+<h2>Ускоренная доставка кед Vans и магазины самовывоза</h2>
+<p>Мы доставляем кеды в город {$data.city} в наши магазины самовывоза через {if $data.delivery_time==''}несколько рабочих дней{else}{$data.delivery_time}{/if} после заказа{if $data.delivery_price != 0}.<br>Стоимость доставки кед до пункта самовывоза &mdash; <strong>{$data.delivery_price} рублей.</strong>{else} <strong> БЕСПЛАТНО!</strong>{/if}
+    {if count($pvz)}
+    <br>Адреса пунктов самовывоза:
 <ul>
-  {foreach $pvz as $p}
-    <li><a href="#{$p.code}">{$p.name}</a></li>
-  {/foreach}
+    {foreach $pvz as $p}
+        <li><a href="#{$p.code}">{$p.name}</a></li>
+    {/foreach}
 </ul>
-<p>Также мы можем  доставить кеды по городу {$data.city} курьером или Почтой России. Уже через {$data.delivery_time} дня после заказа Вы можете забрать кеды из нашего пункта самовывоза или курьер  доставит их по удобному для Вас адресу.</p>
-<p>Оплатить покупку Вы можете заранее или при получении кед (в пункте самовывоза, курьеру или на почте).</p>
-<h2>Стоимость доставки кед в город {$data.city}:</h2>
-<ul>
-  <li>Кеды курьером &mdash; {$data.courier_price} (доставка  через {$data.courier_time} рабочих дня после заказа).</li>
-  <li>Купить кеды в городе {$data.city} в пункте самовывоза &mdash; <strong>{$data.delivery_price}</strong> (кеды на пункте самовывоза через {$data.delivery_time} рабочих дня после заказа).</li>
-  <li>Доставка кед в {$data.city} Почтой России &mdash; <strong>БЕСПЛАТНО!</strong> (доставка кед в течении 12-20 дней).</li>
-</ul>
+{/if}
+<a id="courier-delivery"></a>
+<h2>Доставка кед Vans по городу {$data.city} курьером</h2>
+<p>Мы доставляем кеды Ванс курьером по городу {$data.city}
+    {if $data.courier_price == 0}
+        <strong>БЕСПЛАТНО</strong>
+        !
+    {else}
+        всего за
+        <strong>{$data.courier_price} рублей</strong>
+        .
+    {/if}
+    <br>Курьер доставит кеды по удобному для Вас адресу{if $data.courier_time != ''} уже через {$data.courier_time} после заказа{/if}.
+</p>
+
+<a id="post-delivery"></a>
+<h2>Доставка кед Ванс в город {$data.city} Почтой России</h2>
+<p>Мы доставляем кеды в город {$data.city} Почтой России совершенно <strong>БЕСПЛАТНО</strong>!<br>
+    Доставка кед Vans Почтой России осуществляется в течении 12-20 дней.</p>
 
 {foreach $pvz as $p}
-  <h3 id="{$p.code}">Пункт самовывоза {$p.name}</h3>
-  <h5>Адрес</h5><p>{$p.address}</p>
-  <h5>Режим работы</h5><p>{$p.workTime}</p>
-  <h5>Телефон</h5><p>{$p.phone}</p>
-  <h5>Схема проезда</h5>
-<div id="myMap_{$p.code}" style="width: 600px; height: 300px;"></div>
-<hr>
-<script type="text/javascript">
-  var myMap;
-  ymaps.ready(function () {
-    myMap = new ymaps.Map(
-      "myMap_{$p.code}", { center: [{$p.coordY}, {$p.coordX}],
-        zoom: 15 });
-    var myPlacemark = new ymaps.Placemark([{$p.coordY}, {$p.coordX}]);
-    myMap.geoObjects.add(myPlacemark);
-  });
-</script>
+    <hr>
+    <h3 id="{$p.code}">Пункт самовывоза &quot;{$p.name}&quot;</h3>
+    <h5>Адрес</h5>
+    <p>{$p.address}</p>
+    <h5>Режим работы</h5>
+    <p>{$p.workTime}</p>
+    <h5>Телефон</h5>
+    <p>{$p.phone}</p>
+    <h5>Схема проезда</h5>
+    <div class="delivery-map" id="myMap_{$p.code}"></div>
+    <script type="text/javascript">
+        var myMap;
+        ymaps.ready(function () {
+            myMap = new ymaps.Map(
+                    "myMap_{$p.code}", {
+                        center: [{$p.coordY}, {$p.coordX}],
+                        zoom: 15
+                    });
+            var myPlacemark = new ymaps.Placemark([{$p.coordY}, {$p.coordX}]);
+            myMap.geoObjects.add(myPlacemark);
+        });
+    </script>
 {/foreach}

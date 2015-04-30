@@ -16,11 +16,12 @@ class shopDeliveryshopPlugin extends shopPlugin
     public function displayAll()
     {
         $domain = waRequest::server('HTTP_HOST');
-        $template_path = wa()->getAppPath('plugins/deliveryshop/templates/AllCities.html', 'shop');
+//        $template_path = wa()->getAppPath('plugins/deliveryshop/templates/AllCities.html', 'shop');
         
         $model = new waModel();
         $data = $model->query("SELECT * FROM shop_deliveryshop_city WHERE status = 'completed'")->fetchAll('cityCode');
-        
+
+//TODO: Загружать данные по городам одним запросом, сейчас на каждый город делаем несколько запросов в базу
         foreach($data as $k => $v)
         {
             $desc = $model->query("SELECT * FROM shop_deliveryshop_city_description WHERE cityCode = '".$k."' AND domain = '".$domain."'")->fetchAssoc();
@@ -40,8 +41,14 @@ class shopDeliveryshopPlugin extends shopPlugin
                 $desc['delivery_price'] = (int)$desc['delivery_price'] - (int)$staticDeliveryPrice;
                 if($desc['delivery_price'] <= 0)
                 {
-                    $desc['delivery_price'] = 'Бесплатная доставка';
+                    $desc['delivery_price'] = 0; // Changed by woody 29.04.15
                 }
+// Вычитаем компенсацию магазина и из стоимости доставки курьером
+                $desc['courier_price'] = (int)$desc['courier_price'] - (int)($staticDeliveryPrice);
+                if($desc['courier_price'] <= 0){
+                  $desc['courier_price'] = 0;
+                }
+
                 $desc['description'] = str_replace($delivery_time, $desc['delivery_time'], $desc['description']);
                 $desc['description'] = str_replace($delivery_price, $desc['delivery_price'], $desc['description']);
                 $desc['description'] = str_replace($courier_time, $desc['courier_time'], $desc['description']);
