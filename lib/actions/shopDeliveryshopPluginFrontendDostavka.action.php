@@ -68,6 +68,7 @@ class shopDeliveryshopPluginFrontendDostavkaAction extends shopFrontendAction
     $this->view->assign('pvz', $pvz);
 
     $this->view->assign('page', array(
+      'name' => '', //TODO: Сделать отдельное поле для заголовка страницы в настройках города, сейчас выводится в шаблоне описания.
       'content' => $this->view->fetch($template_path)
     ));
 
